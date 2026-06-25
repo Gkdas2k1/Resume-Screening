@@ -1,26 +1,18 @@
 import re
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-nltk.download('stopwords')
-nltk.download('wordnet')
+import string
 
-def clean_text(text):
+
+def preprocess(text: str) -> str:
+    """
+    Clean and preprocess text for better matching
+    """
     # Lowercase
     text = text.lower()
-    # Remove special characters (keep letters and spaces)
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    
+    # Remove punctuation
+    text = text.translate(str.maketrans("", "", string.punctuation))
+    
+    # Remove extra whitespace
+    text = re.sub(r"\s+", " ", text).strip()
+    
     return text
-
-def preprocess(text):
-    # Clean
-    text = clean_text(text)
-    # Tokenize
-    tokens = text.split()
-    # Remove stopwords
-    stop_words = set(stopwords.words('english'))
-    tokens = [t for t in tokens if t not in stop_words]
-    # Lemmatize (e.g., "running" -> "run")
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(t) for t in tokens]
-    return " ".join(tokens)  # Return as string for vectorization

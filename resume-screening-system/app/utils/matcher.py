@@ -1,28 +1,20 @@
-# app/utils/matcher.py
-
-import pickle
-import os
 from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
 
-# Initialize the vectorizer globally (or inside the function)
-def vectorize_resumes(resume_texts, job_desc_text):
-    # Combine to fit the vectorizer
-    all_texts = resume_texts + [job_desc_text]
+
+def vectorize_resumes(resumes: list[str], job_description: str):
+    """
+    Vectorize resumes and job description using TF-IDF
+    """
+    # Combine job description with resumes for vectorization
+    all_texts = resumes + [job_description]
     
-    # Create and fit the TF-IDF vectorizer
-    vectorizer = TfidfVectorizer()
-    vectors = vectorizer.fit_transform(all_texts)
+    # Initialize TF-IDF vectorizer
+    vectorizer = TfidfVectorizer(stop_words="english", max_features=1000)
+    tfidf_matrix = vectorizer.fit_transform(all_texts)
     
-    # --- SAVE THE MODEL ARTIFACT (ADD THIS CODE HERE) ---
-    # Ensure the 'models/' directory exists
-    os.makedirs("models", exist_ok=True)
+    # Split back into resumes and job vector
+    resume_vecs = tfidf_matrix[:-1]
+    job_vec = tfidf_matrix[-1]
     
-    # Save the fitted vectorizer to a pickle file
-    with open("models/tfidf.pkl", "wb") as f:
-        pickle.dump(vectorizer, f)
-    print("TF-IDF Vectorizer saved to models/tfidf.pkl")  # Optional confirmation
-    # --- END OF SAVING CODE ---
-    
-    # Return resume vectors and job vector
-    # (The last vector is the job description, the rest are resumes)
-    return vectors[:-1], vectors[-1]
+    return resume_vecs, job_vec

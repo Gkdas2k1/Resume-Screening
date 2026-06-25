@@ -1,23 +1,33 @@
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+import os
 
-def rank_candidates(resume_vectors, job_vector, resume_texts_raw, job_text_raw):
-    # Calculate similarity
-    similarities = cosine_similarity(resume_vectors, job_vector.reshape(1, -1))
+
+def rank_candidates(resume_vecs, job_vec, raw_resumes, job_description, file_paths):
+    """
+    Rank candidates by cosine similarity and find matched keywords
+    """
+    # Calculate cosine similarity
+    similarities = cosine_similarity(resume_vecs, job_vec.reshape(1, -1)).flatten()
     
-    # Create ranked list
-    ranked = []
-    for idx, score in enumerate(similarities.flatten()):
-        # Explainability: Find common keywords
-        resume_tokens = set(resume_texts_raw[idx].split())
-        jd_tokens = set(job_text_raw.split())
-        matched_keywords = list(resume_tokens.intersection(jd_tokens))[:10]
-        ranked.append({
-            "candidate_id": idx,
-            "score": round(float(score) * 100, 2),
-            "matched_keywords": matched_keywords
+    # Get filenames
+    filenames = [os.path.basename(path) for path in file_paths]
+    
+    # Find matched keywords
+    results = []
+    jd_words = set(job_description.lower().split())
+    
+    for i, (score, resume) in enumerate(zip(similarities, raw_resumes)):
+        resume_words = set(resume.lower().split())
+        matched_keywords = list(jd_words & resume_words)
+        
+        results.append({
+            "filename": filenames[i],
+            "score": float(score),
+            "matched_keywords": matched_keywords[:10]  # Top 10 keywords
         })
     
-    # Sort descending by score
-    ranked = sorted(ranked, key=lambda x: x['score'], reverse=True)
-    return ranked
+    # Sort by score descending
+    results.sort(key=lambda x: x["score"], reverse=True)
+    
+    return results

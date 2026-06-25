@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi import Request
 import os
 import shutil
 from typing import List
@@ -15,6 +17,16 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Store uploaded file paths globally for this session
 uploaded_files = []
+
+# --- NEW: Mount static folder and serve the HTML UI --- 
+# Make sure the "static" folder exists inside your "app" directory 
+app.mount("/static", StaticFiles(directory="app/static"), name="static") 
+
+@app.get("/", response_class=HTMLResponse) 
+async def serve_ui(): 
+    # Serves the HTML file from the static folder 
+    with open("app/static/index.html", "r", encoding="utf-8") as f: 
+        return f.read() 
 
 @app.get("/health")
 async def health():
@@ -50,8 +62,8 @@ async def match_candidates(job_description: str = Form(...), top_n: int = Form(5
     # 2. Vectorize
     resume_vecs, job_vec = vectorize_resumes(cleaned_resumes, cleaned_jd)
     
-    # 3. Rank - passing jd_text as the 4th argument
-    results = rank_candidates(resume_vecs, job_vec, raw_resumes, jd_text)
+    # 3. Rank - passing jd_text and uploaded_files as arguments
+    results = rank_candidates(resume_vecs, job_vec, raw_resumes, jd_text, uploaded_files)
     
     # 4. Return top N
     return JSONResponse(content={"top_candidates": results[:top_n]})
