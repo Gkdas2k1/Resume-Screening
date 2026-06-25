@@ -25,7 +25,6 @@ MANIFEST
 *.pdf
 *.docx
 *.txt
-data/raw_resumes/
 *.log
 .pytest_cache/
 .coverage

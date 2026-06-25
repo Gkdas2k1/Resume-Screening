@@ -67,3 +67,4 @@ async def match_candidates(job_description: str = Form(...), top_n: int = Form(5
     
     # 4. Return top N
     return JSONResponse(content={"top_candidates": results[:top_n]})
+    # Clear
