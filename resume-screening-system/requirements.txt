@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pdfplumber
+PyMuPDF
+scikit-learn
+nltk
+spacy
+python-multipart
+pandas
+numpy
+# Optional for advanced/OCR:
+sentence-transformers
+pytesseract
+Pillow
