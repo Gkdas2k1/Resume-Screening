@@ -1,20 +1,41 @@
 # AI-Powered Resume Screening System
 
-## Project Overview
-This system automates resume screening by parsing resumes (PDF/DOCX/TXT), preprocessing text, and ranking candidates against a job description using TF-IDF vectorization and Cosine Similarity. It provides explainable outputs (matched keywords) and exposes functionality via a RESTful API built with FastAPI.
+## Overview
+This project is a FastAPI-based resume screening application that:
 
-## Setup Instructions
-1. Clone the repository.
-2. Install dependencies: `pip install -r requirements.txt`
-3. Download the spaCy model: `python -m spacy download en_core_web_sm`
+- accepts resume uploads in `PDF`, `DOCX`, and `TXT`
+- extracts raw text from each resume
+- cleans the text for comparison
+- converts resumes and the job description into TF-IDF vectors
+- ranks candidates using cosine similarity
+- returns matched keywords for a lightweight explanation layer
 
-## Usage Guide
-1. Run the API server: `uvicorn app.main:app --reload`
-2. Access Swagger UI documentation at: `http://127.0.0.1:8000/docs`
-3. **Upload Resumes:** Use the `/upload-resumes` endpoint to upload PDF/DOCX files.
-4. **Match Candidates:** Use the `/match-candidates` endpoint to submit a job description and get ranked results with scores and matched keywords.
+The project also includes a simple browser UI at `/` and interactive API docs at `/docs`.
 
-## API Endpoints
-- `GET /health` - Health check.
-- `POST /upload-resumes` - Upload multiple resume files.
-- `POST /match-candidates` - Rank uploaded resumes against a job description.
+## Quick Start
+1. Install dependencies:
+   `pip install -r requirements.txt`
+2. Start the app:
+   `uvicorn app.main:app --reload`
+3. Open one of these routes:
+   `http://127.0.0.1:8000/` for the HTML interface
+   `http://127.0.0.1:8000/docs` for Swagger UI
+
+## Main Endpoints
+- `GET /` serves the frontend page
+- `GET /health` returns a simple health status
+- `POST /upload-resumes` stores uploaded resumes for the current running session
+- `POST /match-candidates` ranks uploaded resumes against a job description
+
+## Full Documentation
+Detailed project documentation is available here:
+
+- [Project Documentation](./docs/PROJECT_DOCUMENTATION.md)
+
+It includes:
+
+- architecture and data flow
+- file-by-file code explanation
+- API behavior
+- frontend page and section explanation
+- current limitations and improvement ideas
