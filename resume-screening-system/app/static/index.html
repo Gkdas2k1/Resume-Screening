@@ -127,7 +127,7 @@
                         resultsHtml += `
                             <div class="candidate">
                                 <h3>${index + 1}. ${candidate.filename}</h3>
-                                <p>Score: ${candidate.score.toFixed(2)}</p>
+                                <p>Score: ${(candidate.score * 100).toFixed(2)}%</p>
                                 <p>Matched Keywords: ${candidate.matched_keywords.join(', ')}</p>
                             </div>
                         `;
